@@ -1,0 +1,50 @@
+﻿@model Cancun.App.ViewModels.ReservationViewModel
+
+@{
+    ViewData["Title"] = "Edit Reservation - " + Model.Id;
+}
+
+<h4 style="padding-top: 30px">@ViewData["Title"] </h4>
+<hr />
+<div class="row">
+    <div class="col-md-10">
+        <form enctype="multipart/form-data" asp-action="Edit">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SuiteId" class="control-label"></label>
+                <select asp-for="SuiteId" class="form-control" asp-items="@(new SelectList(Model.Suites, "Id", "Name"))">
+                    <option></option>
+                </select>
+
+                <span asp-validation-for="SuiteId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CheckIn" class="control-label"></label>
+                <input class="form-control"  data-val="true" data-val-required="Required"
+                       id="CheckIn" name="CheckIn" asp-for="CheckIn" asp-format="{0:yyyy-MM-ddTHH:mm}">
+                <span asp-validation-for="CheckIn" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CheckOut" class="control-label"></label>
+                <input class="form-control" data-val="true" data-val-required="Required"
+                       id="CheckOut" name="CheckOut" asp-for="CheckOut" asp-format="{0:yyyy-MM-ddTHH:mm}">
+                <span asp-validation-for="CheckOut" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PriceTotal" class="control-label"></label>
+                <input asp-for="PriceTotal" class="form-control" />
+                <span asp-validation-for="PriceTotal" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Edit" class="btn btn-primary" />
+                <a class="btn btn-info" asp-action="Index">Return</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

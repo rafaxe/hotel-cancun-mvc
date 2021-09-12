@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Cancun.App.ViewModels.ReservationViewModel>
+
+@{
+    ViewData["Title"] = "Reservations";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<vc:Summary></vc:Summary>
+
+<p supress-by-claim-name="Reservation" supress-by-claim-value="Add">
+    <a class="btn btn-info" asp-action="Create">New Reservation</a>
+</p>
+
+<partial name="_ListReservations"/>

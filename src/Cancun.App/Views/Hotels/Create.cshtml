@@ -1,0 +1,52 @@
+﻿@model Cancun.App.ViewModels.HotelViewModel
+
+@{
+    ViewData["Title"] = "New Hotel";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-10">
+        <form asp-action="Create">
+
+            <vc:Summary></vc:Summary>
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Document" class="control-label"></label>
+                <input asp-for="Document" class="form-control"/>
+                <span asp-validation-for="Document" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Active"/> @Html.DisplayNameFor(model => model.Active)
+                </label>
+            </div>
+
+            <h4>Adress</h4>
+            <hr/>
+
+            <partial name="_Address"/>
+
+            <div class="form-group">
+                <input type="submit" value="Register" class="btn btn-primary"/>
+                <a class="btn btn-info" asp-action="Index">Return</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        BuscaCep();
+    </script>
+}

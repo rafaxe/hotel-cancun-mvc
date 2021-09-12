@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Cancun.App.ViewModels.SuiteViewModel>
+
+@{
+    ViewData["Title"] = "Suites";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<vc:Summary></vc:Summary>
+
+<p supress-by-claim-name="Suite" supress-by-claim-value="Add">
+    <a class="btn btn-info" asp-action="Create">New Suite</a>
+</p>
+
+<partial name="_ListSuites"/>

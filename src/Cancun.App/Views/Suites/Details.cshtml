@@ -1,0 +1,58 @@
+﻿@model Cancun.App.ViewModels.SuiteViewModel
+
+@{
+    ViewData["Title"] = "Suite Datail - " + Model.Name;
+}
+
+<h4 style="padding-top: 50px">@ViewData["Title"]</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <img src="~/imagens/@Model.Image" alt="@Model.Image" style="width: 300px; height: 428px" />
+    </div>
+    <div class="col-md-6">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.HotelId)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Hotel.Name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Price)
+            </dt>
+            <dd>
+                @Model.Price.ToString("C")
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.RegistrationDate)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.RegistrationDate)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Active)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Active)
+            </dd>
+        </dl>
+
+        <div>
+            <a supress-by-claim-name="Suite" supress-by-claim-value="Edit" class="btn btn-dark" sp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+            <a class="btn btn-info" href="javascript:window.history.back();">Return</a>
+        </div>
+    </div>
+</div>
