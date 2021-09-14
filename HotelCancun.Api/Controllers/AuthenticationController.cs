@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using AutoMapper;
 using HotelCancun.Api.Configurations;
 using HotelCancun.Api.ViewModels;
 using HotelCancun.Business.Models;
@@ -46,11 +47,12 @@ namespace HotelCancun.Api.Controllers
         public async Task<ActionResult<dynamic>> Authenticate([FromBody] UserViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-
+            
             if (user == null)
                 return NotFound(new { message = "username or password is invalid" });
 
-            var token = TokenConfiguration.GenerateToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            var token = TokenConfiguration.GenerateToken(user, roles);
 
             user.PasswordHash = "";
 

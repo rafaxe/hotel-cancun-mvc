@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
-using HotelCancun.Api.Extensions;
-using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
 using HotelCancun.Api.ViewModels;
 using HotelCancun.Business.Interfaces;
 using HotelCancun.Business.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HotelCancun.Api.Controllers
 {
@@ -51,7 +50,7 @@ namespace HotelCancun.Api.Controllers
             return Ok(hotelViewModel);
         }
 
-        [ClaimsAuthorize("Hotel", "Add")]
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public async Task<IActionResult> Create(HotelViewModel hotelViewModel)
         {
@@ -65,7 +64,7 @@ namespace HotelCancun.Api.Controllers
             return Ok(hotelViewModel);
         }
 
-        [ClaimsAuthorize("Hotel", "Edit")]
+        [Authorize(Roles = "Manager")]
         [Route("{id:guid}")]
         [HttpPut]
         public async Task<IActionResult> Edit(Guid id, HotelViewModel hotelViewModel)
@@ -82,7 +81,7 @@ namespace HotelCancun.Api.Controllers
             return Ok(hotelViewModel);
         }
 
-        [ClaimsAuthorize("Hotel", "Remove")]
+        [Authorize(Roles = "Manager")]
         [Route("{id:guid}")]
         [HttpDelete, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
@@ -98,7 +97,7 @@ namespace HotelCancun.Api.Controllers
             return Ok("Index");
         }
 
-        [ClaimsAuthorize("Hotel", "Edit")]
+        [Authorize(Roles = "Manager")]
         [Route("address/{id:guid}")]
         [HttpPut]
         public async Task<IActionResult> UpdateAddress(HotelViewModel hotelViewModel)

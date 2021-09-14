@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -12,6 +13,14 @@ namespace HotelCancun.Api.Extensions
         public static bool ValidateClaimsUser(HttpContext context, string claimName, string claimValue)
         {
             return context.User.Identity != null && context.User.Identity.IsAuthenticated && context.User.Claims.Any(c => c.Type == claimName && c.Value.Contains(claimValue));
+        }
+    }
+
+    public class AuthorizeRolesAttribute : AuthorizeAttribute
+    {
+        public AuthorizeRolesAttribute(params string[] roles) : base()
+        {
+            Roles = string.Join(",", roles);
         }
     }
 

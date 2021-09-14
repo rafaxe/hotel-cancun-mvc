@@ -1,11 +1,8 @@
-﻿using System.Text;
-using HotelCancun.Api.Configurations;
-using HotelCancun.Api.Data;
+﻿using HotelCancun.Api.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace HotelCancun.Api.Extensions
 {
