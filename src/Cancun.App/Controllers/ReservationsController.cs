@@ -22,9 +22,10 @@ namespace Cancun.App.Controllers
         private readonly IReservationService _reservationService;
         private readonly IMapper _mapper;
         private readonly UserManager<IdentityUser> _userManager;
+
         public ReservationsController(IReservationRepository reservationRepository,
-                                  ISuiteRepository suiteRepository, 
-                                  IMapper mapper, 
+                                  ISuiteRepository suiteRepository,
+                                  IMapper mapper,
                                   IReservationService reservationService,
                                   INotifier notifier,
                                   UserManager<IdentityUser> userManager) : base(notifier)
@@ -37,35 +38,38 @@ namespace Cancun.App.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [AllowAnonymous]
+        [Authorize]
         [Route("list-reservations")]
         public async Task<IActionResult> Index()
         {
-            var userClaim = await _userManager.GetUserAsync(User);
-            var claims = await _userManager.GetClaimsAsync(userClaim);
-            if (ClaimsPrincipal.Current.HasClaim("Hotel", "Add,Edit,Remove"))
+            var user = await _userManager.GetUserAsync(User);
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            if (claims.FirstOrDefault(x => x.Type == "Hotel") != null)
                 return View(_mapper.Map<IEnumerable<ReservationViewModel>>(await _reservationRepository.GetReservationsSuites()));
             else
-                return View(_mapper.Map<IEnumerable<ReservationViewModel>>(await _reservationRepository.GetReservationByUserId(userClaim.Id)));
+                return View(_mapper.Map<IEnumerable<ReservationViewModel>>(await _reservationRepository.GetReservationByUserId(user.Id)));
+
         }
 
+
         [ApiExplorerSettings(IgnoreApi = true)]
-        [AllowAnonymous]
+        [Authorize]
         [Route("data-reservation/{id:guid}")]
         public async Task<IActionResult> Details(Guid id)
         {
             var reservationViewModel = await GetReservation(id);
 
-            if (reservationViewModel == null)
+            if (!await AuthorizedUser(reservationViewModel.ApplicationUserId))
             {
-                return NotFound();
+                return Unauthorized();
             }
 
             return View(reservationViewModel);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [ClaimsAuthorize("Reservation","Add")]
+        [Authorize]
         [Route("new-reservation")]
         public async Task<IActionResult> Create()
         {
@@ -74,16 +78,23 @@ namespace Cancun.App.Controllers
             return View(reservationViewModel);
         }
 
-        [ClaimsAuthorize("Reservation", "Add")]
+        [Authorize]
         [Route("new-reservation")]
         [HttpPost]
         public async Task<IActionResult> Create(ReservationViewModel reservationViewModel)
         {
             reservationViewModel = await PopulateSuites(reservationViewModel);
             await GetUser(reservationViewModel);
-  
+
+            if (!await AuthorizedUser(reservationViewModel.ApplicationUserId))
+            {
+                return Unauthorized();
+            }
+
+            reservationViewModel.Suite = await _suiteRepository.GetById(reservationViewModel.SuiteId);
             reservationViewModel.CheckIn = reservationViewModel.CheckIn.Date;
             reservationViewModel.CheckOut = reservationViewModel.CheckOut.Date;
+            reservationViewModel.RecalculatePrice();
 
             if (!ModelState.IsValid) return View(reservationViewModel);
             await _reservationService.Add(_mapper.Map<Reservation>(reservationViewModel));
@@ -94,36 +105,47 @@ namespace Cancun.App.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [ClaimsAuthorize("Reservation", "Edit")]
+        [Authorize]
         [Route("edit-reservation/{id:guid}")]
         public async Task<IActionResult> Edit(Guid id)
         {
             var reservationViewModel = await GetReservation(id);
             reservationViewModel = await PopulateSuites(reservationViewModel);
+
             if (reservationViewModel == null)
             {
                 return NotFound();
             }
 
+            if (!await AuthorizedUser(reservationViewModel.ApplicationUserId))
+            {
+                return Unauthorized();
+            }
+
             return View(reservationViewModel);
         }
 
-        [ClaimsAuthorize("Reservation", "Edit")]
+        [Authorize]
         [Route("edit-reservation/{id:guid}")]
         [HttpPost]
         public async Task<IActionResult> Edit(Guid id, ReservationViewModel reservationViewModel)
         {
             if (id != reservationViewModel.Id) return NotFound();
-
-            var reservationUpdate = await GetReservation(id);
             reservationViewModel = await PopulateSuites(reservationViewModel);
-            reservationViewModel.Suite = reservationUpdate.Suite;
-         
-            if (!ModelState.IsValid) return View(reservationViewModel);
 
+            if (!await AuthorizedUser(reservationViewModel.ApplicationUserId))
+            {
+                return Unauthorized();
+            }
+
+            if (!ModelState.IsValid) return View(reservationViewModel);
+            var reservationUpdate = await GetReservation(id);
+
+            reservationViewModel.Suite = reservationUpdate.Suite;
             reservationUpdate.ApplicationUser = reservationViewModel.ApplicationUser;
             reservationUpdate.CheckIn = reservationViewModel.CheckIn.Date;
             reservationUpdate.CheckOut = reservationViewModel.CheckOut.Date;
+            reservationUpdate.RecalculatePrice();
 
             await _reservationService.Update(_mapper.Map<Reservation>(reservationUpdate));
 
@@ -133,35 +155,45 @@ namespace Cancun.App.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [ClaimsAuthorize("Reservation", "Remove")]
+        [Authorize]
         [Route("remove-reservation/{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var reservation = await GetReservation(id);
+            var reservationViewModel = await GetReservation(id);
 
-            if (reservation == null)
+            if (reservationViewModel == null)
             {
                 return NotFound();
             }
 
-            return View(reservation);
+            if (!await AuthorizedUser(reservationViewModel.ApplicationUserId))
+            {
+                return Unauthorized();
+            }
+
+            return View(reservationViewModel);
         }
 
-        [ClaimsAuthorize("Reservation", "Remove")]
+        [Authorize]
         [Route("remove-reservation/{id:guid}")]
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var reservation = await GetReservation(id);
+            var reservationViewModel = await GetReservation(id);
 
-            if (reservation == null)
+            if (reservationViewModel == null)
             {
                 return NotFound();
             }
 
+            if (!await AuthorizedUser(reservationViewModel.ApplicationUserId))
+            {
+                return Unauthorized();
+            }
+
             await _reservationService.Remove(id);
 
-            if (!ValidOperation()) return View(reservation);
+            if (!ValidOperation()) return View(reservationViewModel);
 
             TempData["Sucesso"] = "Reservation successfully deleted!";
 
@@ -189,6 +221,18 @@ namespace Cancun.App.Controllers
             reservationViewModel.ApplicationUserId = user.Id;
 
             return reservationViewModel;
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        private async Task<bool> AuthorizedUser(string userId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user.Id != userId)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

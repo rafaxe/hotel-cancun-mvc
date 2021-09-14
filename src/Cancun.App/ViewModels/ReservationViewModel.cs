@@ -37,22 +37,13 @@ namespace Cancun.App.ViewModels
         [DisplayName("Days")]
         public int Days
         {
-            get
-            {
-                return (int)(CheckOut - CheckIn).TotalDays;
-            }
+            get { return (int)(CheckOut - CheckIn).TotalDays; }
         }
 
         [Currency]
         [Required(ErrorMessage = "{0} is a Required field")]
         [DisplayName("Price")]
-        public decimal PriceTotal
-        {
-            get
-            {
-                return Suite != null ? Suite.Price * Days : 0;
-            }
-        }
+        public decimal PriceTotal { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -65,6 +56,11 @@ namespace Cancun.App.ViewModels
             {
                 yield return new ValidationResult("Check Out date should be greater than Check In Date");
             }
+        }
+
+        public void RecalculatePrice()
+        {
+            PriceTotal = Suite != null ? Suite.Price * Days : 0;
         }
     }
 }

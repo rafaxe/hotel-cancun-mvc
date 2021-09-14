@@ -42,8 +42,8 @@
                 </td>
                 <td class="text-right">
                     <a class="btn btn-warning" asp-controller="Reservations" asp-action="Details" asp-route-id="@item.Id"><spam class="fa fa-search"></spam> </a>
-                    <a disable-by-claim-name="Reservation" disable-by-claim-value="Edit" class="btn btn-info" asp-controller="Reservations" asp-action="Edit" asp-route-id="@item.Id"><spam class="fa fa-pencil-alt"></spam> </a>
-                    <a disable-by-claim-name="Reservation" disable-by-claim-value="Remove" class="btn btn-danger" asp-controller="Reservations" asp-action="Delete" asp-route-id="@item.Id"><spam class="fa fa-trash"></spam> </a>
+                    <a class="btn btn-info" asp-controller="Reservations" asp-action="Edit" asp-route-id="@item.Id"><spam class="fa fa-pencil-alt"></spam> </a>
+                    <a class="btn btn-danger" asp-controller="Reservations" asp-action="Delete" asp-route-id="@item.Id"><spam class="fa fa-trash"></spam> </a>
                 </td>
             </tr>
         }

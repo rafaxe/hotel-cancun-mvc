@@ -57,7 +57,6 @@ namespace Cancun.Data.Repository
         public override async Task Remove(Guid id)
         {
             var entity = new Reservation { Id = id };
-            Db.Entry(entity.Suite).State = EntityState.Unchanged;
             DbSet.Remove(entity);
             await SaveChanges();
         }
