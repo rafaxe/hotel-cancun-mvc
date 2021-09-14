@@ -1,0 +1,15 @@
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\bin\Debug\net5.0\HotelCancun.Data.deps.json
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\bin\Debug\net5.0\HotelCancun.Data.dll
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\bin\Debug\net5.0\ref\HotelCancun.Data.dll
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\bin\Debug\net5.0\HotelCancun.Data.pdb
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\bin\Debug\net5.0\HotelCancun.Business.dll
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\bin\Debug\net5.0\HotelCancun.Business.pdb
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\obj\Debug\net5.0\HotelCancun.Data.csproj.AssemblyReference.cache
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\obj\Debug\net5.0\HotelCancun.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\obj\Debug\net5.0\HotelCancun.Data.AssemblyInfoInputs.cache
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\obj\Debug\net5.0\HotelCancun.Data.AssemblyInfo.cs
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\obj\Debug\net5.0\HotelCancun.Data.csproj.CoreCompileInputs.cache
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\obj\Debug\net5.0\HotelCancun.Data.csproj.CopyComplete
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\obj\Debug\net5.0\HotelCancun.Data.dll
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\obj\Debug\net5.0\ref\HotelCancun.Data.dll
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Data\obj\Debug\net5.0\HotelCancun.Data.pdb

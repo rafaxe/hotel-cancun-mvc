@@ -1,0 +1,12 @@
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\bin\Debug\net5.0\HotelCancun.Business.deps.json
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\bin\Debug\net5.0\HotelCancun.Business.dll
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\bin\Debug\net5.0\ref\HotelCancun.Business.dll
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\bin\Debug\net5.0\HotelCancun.Business.pdb
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\obj\Debug\net5.0\HotelCancun.Business.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\obj\Debug\net5.0\HotelCancun.Business.AssemblyInfoInputs.cache
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\obj\Debug\net5.0\HotelCancun.Business.AssemblyInfo.cs
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\obj\Debug\net5.0\HotelCancun.Business.csproj.CoreCompileInputs.cache
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\obj\Debug\net5.0\HotelCancun.Business.dll
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\obj\Debug\net5.0\ref\HotelCancun.Business.dll
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\obj\Debug\net5.0\HotelCancun.Business.pdb
+C:\Projects\Github\hotel-cancun-api\HotelCancun.Business\obj\Debug\net5.0\HotelCancun.Business.csproj.AssemblyReference.cache
