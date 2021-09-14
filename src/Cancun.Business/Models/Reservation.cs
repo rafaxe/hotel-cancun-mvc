@@ -15,5 +15,17 @@ namespace Cancun.Business.Models
         /* EF Relations */
         [ForeignKey("SuiteId")]
         public virtual Suite Suite { get; set; }
+
+        //It is not in the constructor because of a limitation of the EF
+        private void RecalculateDays()
+        {
+            Days = (int)(CheckOut - CheckIn).TotalDays;
+        }
+
+        public void RecalculatePrice()
+        {
+            RecalculateDays();
+            PriceTotal = Suite != null ? Suite.Price * Days : 0;
+        }
     }
 }

@@ -1,16 +1,14 @@
 ﻿using AutoMapper;
-using Cancun.App.Extensions;
 using Cancun.App.ViewModels;
 using Cancun.Business.Intefaces;
 using Cancun.Business.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using System.Linq;
-using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Cancun.App.Controllers
 {
@@ -86,15 +84,9 @@ namespace Cancun.App.Controllers
             reservationViewModel = await PopulateSuites(reservationViewModel);
             await GetUser(reservationViewModel);
 
-            if (!await AuthorizedUser(reservationViewModel.ApplicationUserId))
-            {
-                return Unauthorized();
-            }
-
             reservationViewModel.Suite = await _suiteRepository.GetById(reservationViewModel.SuiteId);
             reservationViewModel.CheckIn = reservationViewModel.CheckIn.Date;
             reservationViewModel.CheckOut = reservationViewModel.CheckOut.Date;
-            reservationViewModel.RecalculatePrice();
 
             if (!ModelState.IsValid) return View(reservationViewModel);
             await _reservationService.Add(_mapper.Map<Reservation>(reservationViewModel));
@@ -133,19 +125,18 @@ namespace Cancun.App.Controllers
             if (id != reservationViewModel.Id) return NotFound();
             reservationViewModel = await PopulateSuites(reservationViewModel);
 
-            if (!await AuthorizedUser(reservationViewModel.ApplicationUserId))
+            if (!ModelState.IsValid) return View(reservationViewModel);
+            var reservationUpdate = await GetReservation(id);
+
+            if (!await AuthorizedUser(reservationUpdate.ApplicationUserId))
             {
                 return Unauthorized();
             }
-
-            if (!ModelState.IsValid) return View(reservationViewModel);
-            var reservationUpdate = await GetReservation(id);
 
             reservationViewModel.Suite = reservationUpdate.Suite;
             reservationUpdate.ApplicationUser = reservationViewModel.ApplicationUser;
             reservationUpdate.CheckIn = reservationViewModel.CheckIn.Date;
             reservationUpdate.CheckOut = reservationViewModel.CheckOut.Date;
-            reservationUpdate.RecalculatePrice();
 
             await _reservationService.Update(_mapper.Map<Reservation>(reservationUpdate));
 

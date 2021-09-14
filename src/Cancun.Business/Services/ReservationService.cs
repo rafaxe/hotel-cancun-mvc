@@ -18,15 +18,15 @@ namespace Cancun.Business.Services
 
         public async Task Add(Reservation reservation)
         {
-            //if (!ExecuteValidation(new ReservationValidation(), reservation)) return;
-
+            reservation.RecalculatePrice();
+            if (!ExecuteValidation(new ReservationValidation(), reservation)) return;
             await _reservationRepository.Add(reservation);
         }
 
         public async Task Update(Reservation reservation)
         {
-            //if (!ExecuteValidation(new ReservationValidation(), reservation)) return;
-
+            reservation.RecalculatePrice();
+            if (!ExecuteValidation(new ReservationValidation(), reservation)) return;
             await _reservationRepository.Update(reservation);
         }
 
