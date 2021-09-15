@@ -69,6 +69,28 @@ namespace HotelCancun.Api.Controllers
             return Ok(outputList);
         }
 
+
+        [HttpGet]
+        [Route("month/{dateMonth:datetime}")]
+        public async Task<IActionResult> Index(DateTime dateMonth)
+        {
+            var reservations = _mapper.Map<IEnumerable<ReservationViewModel>>(await _reservationRepository.GetMonthDates(dateMonth));
+
+            var outputList = reservations.GroupBy(item => item.SuiteId)
+                .Select(group => new
+                {
+                    SuiteId = group.Key,
+                    Date = group.Select(
+                        x => new
+                        {
+                            x.CheckIn,
+                            x.CheckOut,
+                        })
+                });
+
+            return Ok(outputList);
+        }
+
         [Route("{id:guid}")]
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)

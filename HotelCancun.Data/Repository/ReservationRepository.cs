@@ -13,6 +13,11 @@ namespace HotelCancun.Data.Repository
     {
         public ReservationRepository(AppDbContext context) : base(context) { }
 
+        public async Task<IEnumerable<Reservation>> GetMonthDates(DateTime dateMonth)
+        {
+            return await Search(p => p.CheckIn.Month == dateMonth.Month || p.CheckOut.Month == dateMonth.Month);
+        }
+
         public async Task<Reservation> GetReservation(Guid id)
         {
             return await Db.Reservations.AsNoTracking().Include(f => f.Suite)

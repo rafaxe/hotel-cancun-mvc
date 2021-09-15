@@ -7,6 +7,7 @@ namespace HotelCancun.Business.Interfaces
 {
     public interface IReservationRepository : IRepository<Reservation>
     {
+        Task<IEnumerable<Reservation>> GetMonthDates(DateTime dateMonth);
         Task<Reservation> GetReservation(Guid id);
         Task<IEnumerable<Reservation>> GetReservationsSuites();
         Task<IEnumerable<Reservation>> GetReservationByUserId(string userId);
