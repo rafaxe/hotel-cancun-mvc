@@ -14,8 +14,8 @@ namespace HotelCancun.UnitTests.Business.Services
     public class ReservationTests
     {
         [Fact]
-        [DisplayName("The reservation should be add with success")]
-        public async Task ShouldBeAddWithSuccess()
+        [DisplayName("The reservation should be added with success")]
+        public async Task ShouldBeAddedWithSuccess()
         {
             // Arrange
             var repository = new Mock<IReservationRepository>();
@@ -166,7 +166,7 @@ namespace HotelCancun.UnitTests.Business.Services
             repository.Setup(x => x.GetReservationBySuiteDate(It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .ReturnsAsync(conflictReservations);
 
-    
+
             var service = new ReservationService(repository.Object, notifier.Object);
 
             // Act
@@ -175,5 +175,7 @@ namespace HotelCancun.UnitTests.Business.Services
             // Assert
             Assert.Null(result);
         }
+
+
     }
 }
