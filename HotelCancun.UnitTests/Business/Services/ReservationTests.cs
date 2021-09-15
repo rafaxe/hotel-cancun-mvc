@@ -175,7 +175,5 @@ namespace HotelCancun.UnitTests.Business.Services
             // Assert
             Assert.Null(result);
         }
-
-
     }
 }
