@@ -6,7 +6,7 @@ namespace HotelCancun.Business.Interfaces
 {
     public interface IReservationService : IDisposable
     {
-        Task Add(Reservation reservation);
+        Task<Reservation> Add(Reservation reservation);
         Task Update(Reservation reservation);
         Task Remove(Guid id);
     }

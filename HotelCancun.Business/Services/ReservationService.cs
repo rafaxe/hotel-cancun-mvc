@@ -17,15 +17,17 @@ namespace HotelCancun.Business.Services
             _reservationRepository = reservationRepository;
         }
 
-        public async Task Add(Reservation reservation)
+        public async Task<Reservation> Add(Reservation reservation)
         {
             reservation.RecalculatePrice();
             
             if(!await CheckValidDate(reservation))
-                return;
+                return null;
 
-            if (!ExecuteValidation(new ReservationValidation(), reservation)) return;
+            if (!ExecuteValidation(new ReservationValidation(), reservation)) return null;
             await _reservationRepository.Add(reservation);
+
+            return reservation;
         }
 
         private async Task<bool> CheckValidDate(Reservation reservation)
