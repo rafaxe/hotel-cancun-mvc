@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using HotelCancun.Api.Extensions;
 
 namespace HotelCancun.Api.Controllers
 {
@@ -38,11 +37,11 @@ namespace HotelCancun.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return Ok(_mapper.Map<IEnumerable<SuiteViewModel>>(await _suiteRepository.GetSuitesHotels()));
+            return Ok(_mapper.Map<IEnumerable<SuiteViewModel>>(await _suiteRepository.GetSuites()));
         }
 
         [AllowAnonymous]
-        [Route("details/{id:guid}")]
+        [Route("{id:guid}")]
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
@@ -58,15 +57,25 @@ namespace HotelCancun.Api.Controllers
 
         [Authorize(Roles = "Manager")]
         [HttpPost]
-        public async Task<IActionResult> Create(SuiteViewModel suiteViewModel)
+        public async Task<IActionResult> Create(BaseSuiteViewModel baseSuiteViewModel)
         {
-            suiteViewModel = await PopulateHotels(suiteViewModel);
-            if (!ModelState.IsValid) return BadRequest(suiteViewModel);
+            if (!ModelState.IsValid) return BadRequest(baseSuiteViewModel);
 
             var imgPrefix = Guid.NewGuid() + "_";
-            await UploadFile(suiteViewModel.ImageUpload, imgPrefix);
+            await UploadFile(baseSuiteViewModel.ImageUpload, imgPrefix);
 
-            suiteViewModel.Image = imgPrefix + suiteViewModel.ImageUpload.FileName;
+            var suiteViewModel = new SuiteViewModel
+            {
+                Name = baseSuiteViewModel.Name,
+                Active = baseSuiteViewModel.Active,
+                HotelId = baseSuiteViewModel.HotelId,
+                Description = baseSuiteViewModel.Description,
+                ImageUpload = baseSuiteViewModel.ImageUpload,
+                Price = baseSuiteViewModel.Price,
+                RegistrationDate = baseSuiteViewModel.RegistrationDate,
+                Image = baseSuiteViewModel.ImageUpload != null? imgPrefix + baseSuiteViewModel.ImageUpload.FileName: string.Empty,
+            };
+
             await _suiteService.Add(_mapper.Map<Suite>(suiteViewModel));
 
             if (!ValidOperation()) return BadRequest(suiteViewModel);
@@ -77,12 +86,29 @@ namespace HotelCancun.Api.Controllers
         [Authorize(Roles = "Manager")]
         [Route("{id:guid}")]
         [HttpPut]
-        public async Task<IActionResult> Edit(Guid id, SuiteViewModel suiteViewModel)
+        public async Task<IActionResult> Edit(Guid id, EditSuiteViewModel editSuiteViewModel)
         {
-            if (id != suiteViewModel.Id) return NotFound();
+            if (id != editSuiteViewModel.Id) return NotFound();
+
+            var suiteViewModel = new SuiteViewModel
+            {
+                Id = editSuiteViewModel.Id,
+                Name = editSuiteViewModel.Name,
+                Active = editSuiteViewModel.Active,
+                HotelId = editSuiteViewModel.HotelId,
+                Description = editSuiteViewModel.Description,
+                ImageUpload = editSuiteViewModel.ImageUpload,
+                Price = editSuiteViewModel.Price,
+                RegistrationDate = editSuiteViewModel.RegistrationDate,
+            };
 
             var suiteUpdate = await GetSuite(id);
-            suiteViewModel.Hotel = suiteUpdate.Hotel;
+
+            await _hotelRepository.GetById(suiteViewModel.HotelId);
+            var hotel = await _hotelRepository.GetById(suiteViewModel.HotelId);
+            var hotelViewModel = _mapper.Map<HotelViewModel>(hotel);
+
+            suiteViewModel.Hotel = hotelViewModel;
             suiteViewModel.Image = suiteUpdate.Image;
             if (!ModelState.IsValid) return BadRequest(suiteViewModel);
 
@@ -97,6 +123,7 @@ namespace HotelCancun.Api.Controllers
             suiteUpdate.Description = suiteViewModel.Description;
             suiteUpdate.Price = suiteViewModel.Price;
             suiteUpdate.Active = suiteViewModel.Active;
+            suiteUpdate.Hotel = suiteViewModel.Hotel;
 
             await _suiteService.Update(_mapper.Map<Suite>(suiteUpdate));
 
@@ -127,23 +154,18 @@ namespace HotelCancun.Api.Controllers
         private async Task<SuiteViewModel> GetSuite(Guid id)
         {
             var suite = _mapper.Map<SuiteViewModel>(await _suiteRepository.GetSuiteHotel(id));
-            suite.Hotels = _mapper.Map<IEnumerable<HotelViewModel>>(await _hotelRepository.GetAll());
-            return suite;
-        }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
-        private async Task<SuiteViewModel> PopulateHotels(SuiteViewModel suite)
-        {
-            suite.Hotels = _mapper.Map<IEnumerable<HotelViewModel>>(await _hotelRepository.GetAll());
+            suite.Hotel = null;
             return suite;
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         private async Task UploadFile(IFormFile file, string imgPrefix)
         {
+            if(file == null) return;
+
             if (file.Length <= 0) return;
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens", imgPrefix + file.FileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", imgPrefix + file.FileName);
 
             if (System.IO.File.Exists(path))
             {

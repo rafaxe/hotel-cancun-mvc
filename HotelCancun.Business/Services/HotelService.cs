@@ -37,13 +37,6 @@ namespace HotelCancun.Business.Services
         public async Task Update(Hotel hotel)
         {
             if (!ExecuteValidation(new HotelValidation(), hotel)) return;
-
-            if (_hotelRepository.Search(f => f.Document == hotel.Document && f.Id != hotel.Id).Result.Any())
-            {
-                Notify("There is already a hotel with this document informed.");
-                return;
-            }
-
             await _hotelRepository.Update(hotel);
         }
 

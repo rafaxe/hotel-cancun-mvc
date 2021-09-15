@@ -1,14 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HotelCancun.Api.ViewModels
 {
-    public class AddressViewModel
+    public class BaseAddressViewModel
     {
-        [Key]
-        public Guid Id { get; set; }
-
         [Required(ErrorMessage = "{0} is a Required field")]
         [StringLength(200, ErrorMessage = "The field {0} must have between {2} and {1} characters", MinimumLength = 2)]
         public string Street { get; set; }
@@ -34,6 +31,33 @@ namespace HotelCancun.Api.ViewModels
         [Required(ErrorMessage = "{0} is a Required field")]
         [StringLength(50, ErrorMessage = "The field {0} must have between {2} and {1} characters", MinimumLength = 2)]
         public string Province { get; set; }
+    }
+
+    public class EditAddressViewModel : BaseAddressViewModel
+    {
+        [Key]
+        public Guid Id { get; set; }
+    }
+
+    public class AddressViewModel : BaseAddressViewModel
+    {
+        public AddressViewModel()
+        {
+        }
+
+        public AddressViewModel(BaseAddressViewModel baseViewModel)
+        {
+            this.City = baseViewModel.City;
+            this.Complement = baseViewModel.Complement;
+            this.Neighborhood = baseViewModel.Neighborhood;
+            this.Number = baseViewModel.Number;
+            this.Province = baseViewModel.Province;
+            this.Street = baseViewModel.Street;
+            this.ZipCode = baseViewModel.ZipCode;
+        }
+
+        [Key]
+        public Guid Id { get; set; }
 
         [HiddenInput]
         public Guid HotelId { get; set; }

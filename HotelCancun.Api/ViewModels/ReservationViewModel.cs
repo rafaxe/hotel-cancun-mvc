@@ -1,29 +1,20 @@
 ﻿using HotelCancun.Api.Extensions;
 using HotelCancun.Business.Models;
-using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using HotelCancun.Api.Data;
 
 namespace HotelCancun.Api.ViewModels
 {
-    public class ReservationViewModel : IValidatableObject
+    public class CreateReservationViewModel
     {
         [Key]
         public Guid Id { get; set; }
-        public Suite Suite { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
-        public IEnumerable<SuiteViewModel> Suites { get; set; }
 
         [Required(ErrorMessage = "{0} is a Required field")]
         [DisplayName("Suite")]
         public Guid SuiteId { get; set; }
-
-
-        [DisplayName("ApplicationUser")]
-        public string ApplicationUserId { get; set; }
 
         [Required(ErrorMessage = "{0} is a Required field")]
         [DisplayName("CheckIn")]
@@ -32,6 +23,19 @@ namespace HotelCancun.Api.ViewModels
         [Required(ErrorMessage = "{0} is a Required field")]
         [DisplayName("CheckOut")]
         public DateTime CheckOut { get; set; }
+    }
+
+    public class ReservationViewModel : CreateReservationViewModel, IValidatableObject
+    {
+
+        public Suite Suite { get; set; }
+
+        public ApplicationUser ApplicationUser { get; set; }
+
+        public IEnumerable<SuiteViewModel> Suites { get; set; }
+
+        [DisplayName("ApplicationUser")]
+        public string ApplicationUserId { get; set; }
 
         [Currency]
         [DisplayName("Price")]

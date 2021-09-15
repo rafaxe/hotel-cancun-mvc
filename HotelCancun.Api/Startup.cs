@@ -23,7 +23,7 @@ namespace HotelCancun.Api
         }
 
         public IConfiguration Configuration { get; }
-  
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -32,21 +32,11 @@ namespace HotelCancun.Api
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            //services.AddIdentity<ApplicationUser, IdentityRole>()
-            //    .AddEntityFrameworkStores<AppDbContext>()
-            //    .AddDefaultTokenProviders();
-     
-
-            //services.AddIdentityConfiguration(Configuration);
-
-            // services.AddDbContext<AppDbContext>(options =>options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-
             services.AddAutoMapper(typeof(Startup));
             services.ResolveDependencies();
             services.AddControllers();
-            //
             services.AddCors();
-            //
+
             var key = Encoding.ASCII.GetBytes(Settings.Secret);
             services.AddAuthentication(x =>
                 {
@@ -66,16 +56,34 @@ namespace HotelCancun.Api
                     };
                 });
 
-            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddDefaultIdentity<ApplicationUser>()
-         .AddRoles<IdentityRole>()
-         .AddEntityFrameworkStores<AppDbContext>();
+                 .AddRoles<IdentityRole>()
+                 .AddEntityFrameworkStores<AppDbContext>();
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelHotelCancun.Api", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please insert JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
             });
         }
 
@@ -101,13 +109,12 @@ namespace HotelCancun.Api
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();//
+            app.UseCookiePolicy();
 
             app.UseCors(builder => builder
                .AllowAnyOrigin()
                .AllowAnyMethod()
                .AllowAnyHeader());
-            //    .AllowCredentials());
 
             app.UseGlobalizationConfig();
             app.UseHttpsRedirection();

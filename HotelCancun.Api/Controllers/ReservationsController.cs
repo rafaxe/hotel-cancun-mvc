@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using HotelCancun.Api.Data;
 
 namespace HotelCancun.Api.Controllers
 {
@@ -41,10 +41,15 @@ namespace HotelCancun.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            var claims = await _userManager.GetClaimsAsync(user);
+            var claims = ((ClaimsIdentity)User.Identity);
 
-            if (claims.FirstOrDefault(x => x.Type == "Hotel") != null)
+            if (claims == null)
+                return NotFound();
+
+            var claimEmail = claims.FindFirst(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(claimEmail?.Value);
+
+            if (claims.FindAll(ClaimTypes.Role).FirstOrDefault(x => x.Value == "Manager") != null)
                 return Ok(_mapper.Map<IEnumerable<ReservationViewModel>>(await _reservationRepository.GetReservationsSuites()));
 
             return Ok(_mapper.Map<IEnumerable<ReservationViewModel>>(await _reservationRepository.GetReservationByUserId(user.Id)));
@@ -66,14 +71,18 @@ namespace HotelCancun.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ReservationViewModel reservationViewModel)
+        public async Task<IActionResult> Create(CreateReservationViewModel createReservationViewModel)
         {
-            reservationViewModel = await PopulateSuites(reservationViewModel);
-            await GetUser(reservationViewModel);
+            var reservationViewModel = new ReservationViewModel()
+            {
+                CheckIn = createReservationViewModel.CheckIn.Date,
+                CheckOut = createReservationViewModel.CheckOut.Date,
+                Suite = await _suiteRepository.GetById(createReservationViewModel.SuiteId),
+                SuiteId = createReservationViewModel.SuiteId,
+            };
 
-            reservationViewModel.Suite = await _suiteRepository.GetById(reservationViewModel.SuiteId);
-            reservationViewModel.CheckIn = reservationViewModel.CheckIn.Date;
-            reservationViewModel.CheckOut = reservationViewModel.CheckOut.Date;
+            await GetUser(reservationViewModel);
+            reservationViewModel.ApplicationUserId = reservationViewModel.ApplicationUser.Id;
 
             if (!ModelState.IsValid) return BadRequest(reservationViewModel);
             await _reservationService.Add(_mapper.Map<Reservation>(reservationViewModel));
@@ -85,12 +94,11 @@ namespace HotelCancun.Api.Controllers
 
         [Route("{id:guid}")]
         [HttpPut]
-        public async Task<IActionResult> Edit(Guid id, ReservationViewModel reservationViewModel)
+        public async Task<IActionResult> Edit(Guid id, CreateReservationViewModel createReservationViewModel)
         {
-            if (id != reservationViewModel.Id) return NotFound();
-            reservationViewModel = await PopulateSuites(reservationViewModel);
+            if (id != createReservationViewModel.Id) return NotFound();
 
-            if (!ModelState.IsValid) return BadRequest(reservationViewModel);
+            if (!ModelState.IsValid) return BadRequest(createReservationViewModel);
             var reservationUpdate = await GetReservation(id);
 
             if (!await AuthorizedUser(reservationUpdate.ApplicationUserId))
@@ -98,10 +106,17 @@ namespace HotelCancun.Api.Controllers
                 return Unauthorized();
             }
 
-            reservationViewModel.Suite = reservationUpdate.Suite;
-            reservationUpdate.ApplicationUser = reservationViewModel.ApplicationUser;
-            reservationUpdate.CheckIn = reservationViewModel.CheckIn.Date;
-            reservationUpdate.CheckOut = reservationViewModel.CheckOut.Date;
+            var reservationViewModel = new ReservationViewModel()
+            {
+                ApplicationUser = reservationUpdate.ApplicationUser,
+                ApplicationUserId = reservationUpdate.ApplicationUserId,
+                CheckIn = reservationUpdate.CheckIn.Date,
+                CheckOut = reservationUpdate.CheckOut.Date,
+                PriceTotal = reservationUpdate.PriceTotal,
+                Suite = reservationUpdate.Suite,
+                SuiteId = reservationUpdate.SuiteId,
+                Suites = reservationUpdate.Suites,
+            };
 
             await _reservationService.Update(_mapper.Map<Reservation>(reservationUpdate));
 
@@ -137,13 +152,6 @@ namespace HotelCancun.Api.Controllers
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        private async Task<ReservationViewModel> PopulateSuites(ReservationViewModel reservation)
-        {
-            reservation.Suites = _mapper.Map<IEnumerable<SuiteViewModel>>(await _suiteRepository.GetAll());
-            return reservation;
-        }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
         private async Task GetUser(ReservationViewModel reservationViewModel)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -154,7 +162,14 @@ namespace HotelCancun.Api.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         private async Task<bool> AuthorizedUser(string userId)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var claims = ((ClaimsIdentity)User.Identity);
+
+            if (claims == null)
+                return false;
+
+            var claimEmail = claims.FindFirst(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(claimEmail?.Value);
+
             return user.Id == userId;
         }
     }

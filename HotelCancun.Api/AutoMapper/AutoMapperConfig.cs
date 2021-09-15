@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using HotelCancun.Api.Data;
 using HotelCancun.Api.ViewModels;
 using HotelCancun.Business.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace HotelCancun.Api.AutoMapper
 {

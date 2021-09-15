@@ -19,9 +19,9 @@ namespace HotelCancun.Data.Repository
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<IEnumerable<Suite>> GetSuitesHotels()
+        public async Task<IEnumerable<Suite>> GetSuites()
         {
-            return await Db.Suites.AsNoTracking().Include(f => f.Hotel)
+            return await Db.Suites.AsNoTracking()
                 .OrderBy(p => p.Name).ToListAsync();
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HotelCancun.Business.Models
 {
@@ -14,6 +15,7 @@ namespace HotelCancun.Business.Models
         public string Province { get; set; }
 
         /* EF Relation */
+        [ForeignKey("HotelId")]
         public Hotel Hotel { get; set; }
     }
 }

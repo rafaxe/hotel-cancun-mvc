@@ -16,5 +16,7 @@ namespace HotelCancun.Data.Repository
             return await Db.Address.AsNoTracking()
                 .FirstOrDefaultAsync(f => f.HotelId == hotelId);
         }
+
+       
     }
 }
