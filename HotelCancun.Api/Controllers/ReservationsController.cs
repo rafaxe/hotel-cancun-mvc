@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace HotelCancun.Api.Controllers
 {
 
-    [Route("reservation")]
+    [Route("reservations")]
     [Authorize]
     public class ReservationsController : BaseController
     {

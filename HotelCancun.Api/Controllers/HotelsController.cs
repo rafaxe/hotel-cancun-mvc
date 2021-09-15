@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace HotelCancun.Api.Controllers
 {
     [Authorize]
-    [Route("hotel")]
+    [Route("hotels")]
     public class HotelsController : BaseController
     {
         private readonly IHotelRepository _hotelRepository;

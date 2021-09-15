@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace HotelCancun.Api.Controllers
 {
     [Authorize]
-    [Route("suite")]
+    [Route("suites")]
     public class SuitesController : BaseController
     {
         private readonly ISuiteRepository _suiteRepository;
