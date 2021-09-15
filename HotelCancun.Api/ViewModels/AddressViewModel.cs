@@ -38,6 +38,8 @@ namespace HotelCancun.Api.ViewModels
     {
         [Key]
         public Guid Id { get; set; }
+
+        public Guid HotelId { get; set; }
     }
 
     public class AddressViewModel : BaseAddressViewModel

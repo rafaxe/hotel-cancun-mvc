@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HotelCancun.Api.Controllers
@@ -40,7 +41,7 @@ namespace HotelCancun.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
-            var hotelViewModel = await GetHotelAddress(id);
+            var hotelViewModel = await GetHotelAddressSuites(id);
 
             if (hotelViewModel == null)
             {
@@ -113,6 +114,7 @@ namespace HotelCancun.Api.Controllers
             if (!ModelState.IsValid) return BadRequest(addressViewModel);
 
             var address = _mapper.Map<Address>(addressViewModel);
+            address.HotelId = editAddressViewModel.HotelId;
             await _hotelService.UpdateAddress(address);
 
             if (!ValidOperation()) return BadRequest(GetNotifications());
@@ -140,6 +142,25 @@ namespace HotelCancun.Api.Controllers
         private async Task<HotelViewModel> GetHotelAddress(Guid id)
         {
             return _mapper.Map<HotelViewModel>(await _hotelRepository.GetHotelAddress(id));
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        private async Task<HotelViewModel> GetHotelAddressSuites(Guid id)
+        {
+            var hotel = await _hotelRepository.GetHotelSuitesAddress(id);
+            hotel.Suites.ToList().ForEach(i => i.Hotel = null);
+
+            var hotelViewModel =  new HotelSuitesViewModel()
+            {
+                Id = hotel.Id,
+                Name = hotel.Name,
+                Active = hotel.Active,
+                Address = _mapper.Map<AddressViewModel>(hotel.Address),
+                Document = hotel.Document,
+                SuitesViewModels = _mapper.Map<IEnumerable<SuiteViewModel>>(hotel.Suites),
+            };
+
+            return hotelViewModel;
         }
     }
 }

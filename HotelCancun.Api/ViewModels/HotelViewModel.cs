@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -36,5 +37,10 @@ namespace HotelCancun.Api.ViewModels
     public class CreateHotelViewModel : BaseHotelViewModel
     {
         public BaseAddressViewModel Address { get; set; }
+    }
+
+    public class HotelSuitesViewModel : HotelViewModel
+    {
+        public IEnumerable<SuiteViewModel> SuitesViewModels { get; set; }
     }
 }
