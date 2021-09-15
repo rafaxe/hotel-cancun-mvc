@@ -96,10 +96,10 @@ namespace HotelCancun.Api.Controllers
 
             await GetUser(reservationViewModel);
             reservationViewModel.ApplicationUserId = reservationViewModel.ApplicationUser.Id;
-            if (!ModelState.IsValid) return BadRequest(reservationViewModel);
+            if (!ModelState.IsValid) return BadRequest(createReservationViewModel);
             await _reservationService.Add(_mapper.Map<Reservation>(reservationViewModel));
 
-            if (!ValidOperation()) return BadRequest(reservationViewModel);
+            if (!ValidOperation()) return BadRequest(GetNotifications());
 
             return Ok(createReservationViewModel);
         }
@@ -134,7 +134,7 @@ namespace HotelCancun.Api.Controllers
             reservationViewModel.Suite = await _suiteRepository.GetSuiteHotel(reservationViewModel.SuiteId);
             await _reservationService.Update(_mapper.Map<Reservation>(reservationViewModel));
 
-            if (!ValidOperation()) return BadRequest(reservationViewModel);
+            if (!ValidOperation()) return BadRequest(GetNotifications());
 
             return Ok(createReservationViewModel);
         }
@@ -155,7 +155,7 @@ namespace HotelCancun.Api.Controllers
             }
 
             await _reservationService.Remove(id);
-            if (!ValidOperation()) return BadRequest(reservationViewModel);
+            if (!ValidOperation()) return BadRequest(GetNotifications());
             return Ok();
         }
 

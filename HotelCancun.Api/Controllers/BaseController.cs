@@ -1,4 +1,6 @@
-﻿using HotelCancun.Business.Interfaces;
+﻿using System.Collections.Generic;
+using HotelCancun.Business.Interfaces;
+using HotelCancun.Business.Notifications;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelCancun.Api.Controllers
@@ -15,6 +17,12 @@ namespace HotelCancun.Api.Controllers
         protected bool ValidOperation()
         {
             return !_notifier.HasNotification();
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        protected List<Notification> GetNotifications()
+        {
+            return _notifier.GetNotifications();
         }
     }
 }

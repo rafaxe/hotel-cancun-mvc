@@ -21,7 +21,8 @@ namespace HotelCancun.Api.ViewModels
         public string Neighborhood { get; set; }
 
         [Required(ErrorMessage = "{0} is a Required field")]
-        [StringLength(8, ErrorMessage = "The field {0} must have {1} characters", MinimumLength = 8)]
+        //Commented validation to facilitate testing
+        //[StringLength(8, ErrorMessage = "The field {0} must have {1} characters", MinimumLength = 8)]
         public string ZipCode { get; set; }
 
         [Required(ErrorMessage = "{0} is a Required field")]

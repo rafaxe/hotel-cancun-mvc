@@ -35,6 +35,15 @@ namespace HotelCancun.Data.Repository
             return await Search(p => p.SuiteId == suiteId);
         }
 
+        public async Task<IEnumerable<Reservation>> GetReservationBySuiteDate(Guid suiteId, DateTime checkIn, DateTime checkOut)
+        {
+            return await Search(
+                p => p.SuiteId == suiteId &&
+                (checkIn <= p.CheckOut && checkIn >= p.CheckIn || p.CheckIn <= checkOut && p.CheckIn >= checkIn)
+            );
+
+        }
+
         public async Task<IEnumerable<Reservation>> GetReservationByHotel(Guid hotelId)
         {
             return await Search(p => p.Suite.HotelId == hotelId);

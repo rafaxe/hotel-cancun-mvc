@@ -79,7 +79,7 @@ namespace HotelCancun.Api.Controllers
 
             await _suiteService.Add(_mapper.Map<Suite>(suiteViewModel));
 
-            if (!ValidOperation()) return BadRequest(suiteViewModel);
+            if (!ValidOperation()) return BadRequest(GetNotifications());
 
             return Ok(suiteViewModel);
         }
@@ -117,7 +117,7 @@ namespace HotelCancun.Api.Controllers
 
             await _suiteService.Update(_mapper.Map<Suite>(suiteUpdate));
 
-            if (!ValidOperation()) return BadRequest(suiteViewModel);
+            if (!ValidOperation()) return BadRequest(GetNotifications());
 
             return Ok(suiteViewModel);
         }
@@ -135,7 +135,7 @@ namespace HotelCancun.Api.Controllers
 
             await _suiteService.Remove(id);
 
-            if (!ValidOperation()) return BadRequest(suite);
+            if (!ValidOperation()) return BadRequest(GetNotifications());
 
             return Ok();
         }

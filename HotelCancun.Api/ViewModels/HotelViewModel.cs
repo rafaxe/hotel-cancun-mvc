@@ -11,7 +11,8 @@ namespace HotelCancun.Api.ViewModels
         public string Name { get; set; }
 
         [Required(ErrorMessage = "{0} is a Required field")]
-        [StringLength(14, ErrorMessage = "The field {0} must have between {2} and {1} characters", MinimumLength = 11)]
+        //Commented validation to facilitate testing
+        //[StringLength(14, ErrorMessage = "The field {0} must have between {2} and {1} characters", MinimumLength = 11)]
         public string Document { get; set; }
 
         [DisplayName("Active?")]

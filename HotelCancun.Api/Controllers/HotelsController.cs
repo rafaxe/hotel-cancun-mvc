@@ -67,7 +67,7 @@ namespace HotelCancun.Api.Controllers
             var hotel = _mapper.Map<Hotel>(hotelViewModel);
             await _hotelService.Add(hotel);
 
-            if (!ValidOperation()) return BadRequest(hotelViewModel);
+            if (!ValidOperation()) return BadRequest(GetNotifications());
 
             return Ok(hotelViewModel);
         }
@@ -93,7 +93,7 @@ namespace HotelCancun.Api.Controllers
 
             await _hotelService.Update(hotel);
 
-            if (!ValidOperation()) return BadRequest();
+            if (!ValidOperation()) return BadRequest(GetNotifications());
 
             return Ok(hotelViewModel);
         }
@@ -115,7 +115,7 @@ namespace HotelCancun.Api.Controllers
             var address = _mapper.Map<Address>(addressViewModel);
             await _hotelService.UpdateAddress(address);
 
-            if (!ValidOperation()) return BadRequest();
+            if (!ValidOperation()) return BadRequest(GetNotifications());
 
             return Ok(addressViewModel);
         }
@@ -131,7 +131,7 @@ namespace HotelCancun.Api.Controllers
 
             await _hotelService.Remove(id);
 
-            if (!ValidOperation()) return BadRequest(hotel);
+            if (!ValidOperation()) return BadRequest(GetNotifications());
 
             return Ok("Index");
         }
