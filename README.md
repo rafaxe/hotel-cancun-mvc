@@ -27,7 +27,6 @@
 
 ---
 ## Prerequisites
-
 Before starting, you will need to have the following tools installed on your machine:
 
 - [.NET 5 SDK](https://docs.microsoft.com/pt-br/dotnet/core/install/windows?tabs=net50), 
@@ -86,6 +85,10 @@ $ dotnet watch run
 
 ## 🎨 Swagger
 
+Follow the video to Authenticate user with JWT directly by Swagger (or use a alternative like postman)
+<p align="center">
+  <img alt="GitHub language count" src="https://github.com/rafaxe/hotel-cancun-mvc/blob/main/swagger-login.gif?raw=true">
+</p>
 
 - After creating the admin user, add the manager role permission:
 ```
