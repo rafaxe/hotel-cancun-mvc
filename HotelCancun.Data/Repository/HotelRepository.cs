@@ -20,13 +20,6 @@ namespace HotelCancun.Data.Repository
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public override async Task Update(Hotel entity)
-        {
-            Db.Entry(entity.Address).State = EntityState.Unchanged;
-            DbSet.Update(entity);
-            await SaveChanges();
-        }
-
         public async Task<Hotel> GetHotelSuitesAddress(Guid id)
         {
             return await Db.Hotels.AsNoTracking()

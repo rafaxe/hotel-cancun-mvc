@@ -1,9 +1,9 @@
-﻿using HotelCancun.Api.Extensions;
-using HotelCancun.Business.Models;
+﻿using HotelCancun.Business.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using HotelCancun.Api.Configurations;
 
 namespace HotelCancun.Api.ViewModels
 {
@@ -23,6 +23,15 @@ namespace HotelCancun.Api.ViewModels
         [Required(ErrorMessage = "{0} is a Required field")]
         [DisplayName("CheckOut")]
         public DateTime CheckOut { get; set; }
+    }
+
+    public class OutputReservationViewModel : CreateReservationViewModel
+    {
+        public string ApplicationUserId { get; set; }
+
+        [Currency]
+        [DisplayName("Price")]
+        public decimal PriceTotal { get; set; }
     }
 
     public class ReservationViewModel : CreateReservationViewModel, IValidatableObject

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
-namespace HotelCancun.Api.Extensions
+namespace HotelCancun.Api.Configurations
 {
     public class CurrencyAttribute : ValidationAttribute
     {

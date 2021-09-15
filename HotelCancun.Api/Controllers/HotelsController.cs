@@ -15,17 +15,14 @@ namespace HotelCancun.Api.Controllers
     public class HotelsController : BaseController
     {
         private readonly IHotelRepository _hotelRepository;
-        private readonly IAddressRepository _addressRepository;
         private readonly IHotelService _hotelService;
         private readonly IMapper _mapper;
 
-        public HotelsController(IHotelRepository hotelRepository, 
-            IAddressRepository addressRepository,
+        public HotelsController(IHotelRepository hotelRepository,
               IMapper mapper,
               IHotelService hotelService,
               INotifier notifier) : base(notifier)
         {
-            _addressRepository = addressRepository;
             _hotelRepository = hotelRepository;
             _mapper = mapper;
             _hotelService = hotelService;
@@ -55,16 +52,16 @@ namespace HotelCancun.Api.Controllers
 
         [Authorize(Roles = "Manager")]
         [HttpPost]
-        public async Task<IActionResult> Create(BaseHotelViewModel baseHotelViewModel)
+        public async Task<IActionResult> Create(CreateHotelViewModel createHotelViewModel)
         {
-            if (!ModelState.IsValid) return BadRequest(baseHotelViewModel);
+            if (!ModelState.IsValid) return BadRequest(createHotelViewModel);
 
             var hotelViewModel = new HotelViewModel()
             {
-                Active = baseHotelViewModel.Active,
-                Address = new AddressViewModel(baseHotelViewModel.Address),
-                Document = baseHotelViewModel.Document,
-                Name = baseHotelViewModel.Name,
+                Active = createHotelViewModel.Active,
+                Address = new AddressViewModel(createHotelViewModel.Address),
+                Document = createHotelViewModel.Document,
+                Name = createHotelViewModel.Name,
             };
 
             var hotel = _mapper.Map<Hotel>(hotelViewModel);
@@ -86,21 +83,15 @@ namespace HotelCancun.Api.Controllers
             {
                 Id = editHotelViewModel.Id,
                 Active = editHotelViewModel.Active,
-                Address = new AddressViewModel(editHotelViewModel.Address),
                 Document = editHotelViewModel.Document,
                 Name = editHotelViewModel.Name,
             };
 
-            var oldAddress = await _addressRepository.GetAddressByHotel(hotelViewModel.Id);
-            hotelViewModel.Address.Id = oldAddress.Id;
-
             if (!ModelState.IsValid) return BadRequest(hotelViewModel);
 
             var hotel = _mapper.Map<Hotel>(hotelViewModel);
-            var address = _mapper.Map<Address>(hotelViewModel.Address);
 
             await _hotelService.Update(hotel);
-            await _hotelService.UpdateAddress(address);
 
             if (!ValidOperation()) return BadRequest();
 
@@ -149,12 +140,6 @@ namespace HotelCancun.Api.Controllers
         private async Task<HotelViewModel> GetHotelAddress(Guid id)
         {
             return _mapper.Map<HotelViewModel>(await _hotelRepository.GetHotelAddress(id));
-        }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
-        private async Task<HotelViewModel> GetHotelSuitesAddress(Guid id)
-        {
-            return _mapper.Map<HotelViewModel>(await _hotelRepository.GetHotelSuitesAddress(id));
         }
     }
 }

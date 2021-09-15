@@ -49,11 +49,24 @@ namespace HotelCancun.Api.Controllers
             var claimEmail = claims.FindFirst(ClaimTypes.Email);
             var user = await _userManager.FindByEmailAsync(claimEmail?.Value);
 
+            IEnumerable<ReservationViewModel> reservations;
             if (claims.FindAll(ClaimTypes.Role).FirstOrDefault(x => x.Value == "Manager") != null)
-                return Ok(_mapper.Map<IEnumerable<ReservationViewModel>>(await _reservationRepository.GetReservationsSuites()));
+                reservations = _mapper.Map<IEnumerable<ReservationViewModel>>(await _reservationRepository.GetReservationsSuites());
+            else
+                reservations = _mapper.Map<IEnumerable<ReservationViewModel>>(await _reservationRepository.GetReservationByUserId(user.Id));
 
-            return Ok(_mapper.Map<IEnumerable<ReservationViewModel>>(await _reservationRepository.GetReservationByUserId(user.Id)));
+            var outputList = reservations.Select(
+                x => new OutputReservationViewModel()
+                {
+                    Id = x.Id,
+                    ApplicationUserId = x.ApplicationUserId,
+                    CheckIn = x.CheckIn,
+                    CheckOut = x.CheckOut,
+                    PriceTotal = x.PriceTotal,
+                    SuiteId = x.SuiteId,
+                }).ToList();
 
+            return Ok(outputList);
         }
 
         [Route("{id:guid}")]
@@ -83,13 +96,12 @@ namespace HotelCancun.Api.Controllers
 
             await GetUser(reservationViewModel);
             reservationViewModel.ApplicationUserId = reservationViewModel.ApplicationUser.Id;
-
             if (!ModelState.IsValid) return BadRequest(reservationViewModel);
             await _reservationService.Add(_mapper.Map<Reservation>(reservationViewModel));
 
             if (!ValidOperation()) return BadRequest(reservationViewModel);
 
-            return Ok(reservationViewModel);
+            return Ok(createReservationViewModel);
         }
 
         [Route("{id:guid}")]
@@ -101,6 +113,9 @@ namespace HotelCancun.Api.Controllers
             if (!ModelState.IsValid) return BadRequest(createReservationViewModel);
             var reservationUpdate = await GetReservation(id);
 
+            if (reservationUpdate == null)
+                return NotFound();
+
             if (!await AuthorizedUser(reservationUpdate.ApplicationUserId))
             {
                 return Unauthorized();
@@ -108,21 +123,20 @@ namespace HotelCancun.Api.Controllers
 
             var reservationViewModel = new ReservationViewModel()
             {
+                Id = reservationUpdate.Id,
                 ApplicationUser = reservationUpdate.ApplicationUser,
                 ApplicationUserId = reservationUpdate.ApplicationUserId,
-                CheckIn = reservationUpdate.CheckIn.Date,
-                CheckOut = reservationUpdate.CheckOut.Date,
-                PriceTotal = reservationUpdate.PriceTotal,
-                Suite = reservationUpdate.Suite,
-                SuiteId = reservationUpdate.SuiteId,
-                Suites = reservationUpdate.Suites,
+                CheckIn = createReservationViewModel.CheckIn.Date,
+                CheckOut = createReservationViewModel.CheckOut.Date,
+                SuiteId = createReservationViewModel.SuiteId,
             };
 
-            await _reservationService.Update(_mapper.Map<Reservation>(reservationUpdate));
+            reservationViewModel.Suite = await _suiteRepository.GetSuiteHotel(reservationViewModel.SuiteId);
+            await _reservationService.Update(_mapper.Map<Reservation>(reservationViewModel));
 
             if (!ValidOperation()) return BadRequest(reservationViewModel);
 
-            return Ok(reservationViewModel);
+            return Ok(createReservationViewModel);
         }
 
         [HttpDelete, ActionName("Delete")]
@@ -154,7 +168,7 @@ namespace HotelCancun.Api.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         private async Task GetUser(ReservationViewModel reservationViewModel)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await GetUserApp();
             reservationViewModel.ApplicationUser = user;
             reservationViewModel.ApplicationUserId = user.Id;
         }
@@ -162,15 +176,20 @@ namespace HotelCancun.Api.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         private async Task<bool> AuthorizedUser(string userId)
         {
+            var user = await GetUserApp();
+
+            return user.Id == userId;
+        }
+
+        private async Task<ApplicationUser> GetUserApp()
+        {
             var claims = ((ClaimsIdentity)User.Identity);
 
             if (claims == null)
-                return false;
+                return null;
 
             var claimEmail = claims.FindFirst(ClaimTypes.Email);
-            var user = await _userManager.FindByEmailAsync(claimEmail?.Value);
-
-            return user.Id == userId;
+            return await _userManager.FindByEmailAsync(claimEmail?.Value);
         }
     }
 }

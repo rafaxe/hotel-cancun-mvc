@@ -41,6 +41,7 @@ namespace HotelCancun.Api.ViewModels
 
     public class AddressViewModel : BaseAddressViewModel
     {
+        //Empty constructor to EF Core
         public AddressViewModel()
         {
         }

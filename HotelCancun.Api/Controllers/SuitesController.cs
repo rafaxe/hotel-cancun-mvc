@@ -76,6 +76,7 @@ namespace HotelCancun.Api.Controllers
                 Image = baseSuiteViewModel.ImageUpload != null? imgPrefix + baseSuiteViewModel.ImageUpload.FileName: string.Empty,
             };
 
+
             await _suiteService.Add(_mapper.Map<Suite>(suiteViewModel));
 
             if (!ValidOperation()) return BadRequest(suiteViewModel);
@@ -90,18 +91,7 @@ namespace HotelCancun.Api.Controllers
         {
             if (id != editSuiteViewModel.Id) return NotFound();
 
-            var suiteViewModel = new SuiteViewModel
-            {
-                Id = editSuiteViewModel.Id,
-                Name = editSuiteViewModel.Name,
-                Active = editSuiteViewModel.Active,
-                HotelId = editSuiteViewModel.HotelId,
-                Description = editSuiteViewModel.Description,
-                ImageUpload = editSuiteViewModel.ImageUpload,
-                Price = editSuiteViewModel.Price,
-                RegistrationDate = editSuiteViewModel.RegistrationDate,
-            };
-
+            var suiteViewModel = new SuiteViewModel(editSuiteViewModel);
             var suiteUpdate = await GetSuite(id);
 
             await _hotelRepository.GetById(suiteViewModel.HotelId);
@@ -154,7 +144,8 @@ namespace HotelCancun.Api.Controllers
         private async Task<SuiteViewModel> GetSuite(Guid id)
         {
             var suite = _mapper.Map<SuiteViewModel>(await _suiteRepository.GetSuiteHotel(id));
-            suite.Hotel = null;
+            
+            if(suite != null) suite.Hotel = null;
             return suite;
         }
 

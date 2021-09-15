@@ -34,7 +34,9 @@ namespace HotelCancun.Api
 
             services.AddAutoMapper(typeof(Startup));
             services.ResolveDependencies();
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
             services.AddCors();
 
             var key = Encoding.ASCII.GetBytes(Settings.Secret);

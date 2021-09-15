@@ -1,9 +1,9 @@
-﻿using HotelCancun.Api.Extensions;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using HotelCancun.Api.Configurations;
 
 namespace HotelCancun.Api.ViewModels
 {
@@ -45,6 +45,24 @@ namespace HotelCancun.Api.ViewModels
 
     public class SuiteViewModel : BaseSuiteViewModel
     {
+        public SuiteViewModel(EditSuiteViewModel editSuiteViewModel)
+        {
+            Id = editSuiteViewModel.Id;
+            Name = editSuiteViewModel.Name;
+            Active = editSuiteViewModel.Active;
+            HotelId = editSuiteViewModel.HotelId;
+            Description = editSuiteViewModel.Description;
+            ImageUpload = editSuiteViewModel.ImageUpload;
+            Price = editSuiteViewModel.Price;
+            RegistrationDate = editSuiteViewModel.RegistrationDate;
+        }
+
+        //Empty constructor to EF Core
+        public SuiteViewModel()
+        {
+
+        }
+
         [Key]
         public Guid Id { get; set; }
 

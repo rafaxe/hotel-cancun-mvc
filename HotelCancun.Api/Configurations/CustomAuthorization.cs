@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 
-namespace HotelCancun.Api.Extensions
+namespace HotelCancun.Api.Configurations
 {
     public class CustomAuthorization
     {
@@ -18,7 +18,7 @@ namespace HotelCancun.Api.Extensions
 
     public class AuthorizeRolesAttribute : AuthorizeAttribute
     {
-        public AuthorizeRolesAttribute(params string[] roles) : base()
+        public AuthorizeRolesAttribute(params string[] roles)
         {
             Roles = string.Join(",", roles);
         }
