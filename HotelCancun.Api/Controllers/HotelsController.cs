@@ -53,7 +53,7 @@ namespace HotelCancun.Api.Controllers
 
         [Authorize(Roles = "Manager")]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateHotelViewModel createHotelViewModel)
+        public async Task<IActionResult> Create([FromBody] CreateHotelViewModel createHotelViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(createHotelViewModel);
 
@@ -76,7 +76,7 @@ namespace HotelCancun.Api.Controllers
         [Authorize(Roles = "Manager")]
         [Route("{id:guid}")]
         [HttpPut]
-        public async Task<IActionResult> Edit(Guid id, EditHotelViewModel editHotelViewModel)
+        public async Task<IActionResult> Edit(Guid id, [FromBody] EditHotelViewModel editHotelViewModel)
         {
             if (id != editHotelViewModel.Id) return NotFound();
 

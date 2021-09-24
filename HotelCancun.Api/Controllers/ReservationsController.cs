@@ -106,7 +106,7 @@ namespace HotelCancun.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateReservationViewModel createReservationViewModel)
+        public async Task<IActionResult> Create([FromBody] CreateReservationViewModel createReservationViewModel)
         {
             var reservationViewModel = new ReservationViewModel()
             {
@@ -128,7 +128,7 @@ namespace HotelCancun.Api.Controllers
 
         [Route("{id:guid}")]
         [HttpPut]
-        public async Task<IActionResult> Edit(Guid id, CreateReservationViewModel createReservationViewModel)
+        public async Task<IActionResult> Edit(Guid id, [FromBody] CreateReservationViewModel createReservationViewModel)
         {
             if (id != createReservationViewModel.Id) return NotFound();
 
@@ -162,6 +162,7 @@ namespace HotelCancun.Api.Controllers
         }
 
         [HttpDelete, ActionName("Delete")]
+        [Route("{id:guid}")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var reservationViewModel = await GetReservation(id);

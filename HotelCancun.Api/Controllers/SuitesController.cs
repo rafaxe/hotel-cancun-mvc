@@ -57,7 +57,7 @@ namespace HotelCancun.Api.Controllers
 
         [Authorize(Roles = "Manager")]
         [HttpPost]
-        public async Task<IActionResult> Create(BaseSuiteViewModel baseSuiteViewModel)
+        public async Task<IActionResult> Create([FromForm] BaseSuiteViewModel baseSuiteViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(baseSuiteViewModel);
 
@@ -87,7 +87,7 @@ namespace HotelCancun.Api.Controllers
         [Authorize(Roles = "Manager")]
         [Route("{id:guid}")]
         [HttpPut]
-        public async Task<IActionResult> Edit(Guid id, EditSuiteViewModel editSuiteViewModel)
+        public async Task<IActionResult> Edit(Guid id, [FromForm] EditSuiteViewModel editSuiteViewModel)
         {
             if (id != editSuiteViewModel.Id) return NotFound();
 
@@ -123,7 +123,8 @@ namespace HotelCancun.Api.Controllers
         }
 
         [Authorize(Roles = "Manager")]
-        [HttpDelete, ActionName("Delete")]
+        [Route("{id:guid}")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var suite = await GetSuite(id);
